@@ -1,0 +1,40 @@
+# Git and VCS
+.git
+.gitignore
+.gitattributes
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Raw large dataset folders (not needed in web image, model is already trained)
+DATASET*
+dataset*
+*.tar
+*.zip
+*.gz
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Scratch and intermediate logs
+scratch/
+*.log

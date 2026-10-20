@@ -116,9 +116,9 @@ def evaluate_model(model_name: str, split: str = "test") -> dict:
     y_pred = y_prob.argmax(1)
     m = compute_metrics(y_true, y_pred, class_names)
 
-    from .preprocessing import prepare_batch
+    from .preprocessing import prepare_batch, resolve_filepath
 
-    x = prepare_batch([C.PROJECT_ROOT / f for f in df["filepath"]])
+    x = prepare_batch([resolve_filepath(f) for f in df["filepath"]])
     m["inference"] = measure_inference(model, x)
     m["model_size_mb"] = model_size_mb(path)
     m["params"] = int(model.count_params())

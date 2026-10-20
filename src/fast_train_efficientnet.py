@@ -101,7 +101,7 @@ def main():
     full_dense.set_weights(head_dense.get_weights())
 
     # Evaluate validation metrics
-    val_preds = full_model.predict(P.prepare_batch([C.PROJECT_ROOT / f for f in val_df["filepath"]]), verbose=0)
+    val_preds = full_model.predict(P.prepare_batch([P.resolve_filepath(f) for f in val_df["filepath"]]), verbose=0)
     val_metrics = compute_metrics(val_y, val_preds.argmax(axis=1), class_names)
     log.info("Validation Accuracy: %.4f | Macro F1: %.4f", val_metrics["accuracy"], val_metrics["macro_f1"])
 

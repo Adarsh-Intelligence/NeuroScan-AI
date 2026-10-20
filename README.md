@@ -188,26 +188,44 @@ For an end-to-end tour with diagrams, dataset integrity checks, and Grad-CAM vis
 │   │   ├── custom_cnn.py              # 4-block CNN
 │   │   └── efficientnet.py            # EfficientNetB0 transfer learning
 │   ├── train.py                       # Training loop, callbacks, stage selection
+│   ├── inference.py                   # Production inference & Grad-CAM engine
 │   ├── fast_train_efficientnet.py     # Quick EfficientNet training script
 │   ├── evaluate.py                    # Test metrics, confusion matrix, latency
 │   ├── compare_models.py              # Markdown comparison report
 │   ├── gradcam.py                     # Grad-CAM heatmaps & overlays
 │   ├── plots.py / utils.py            # Plotting & helpers
 │   └── gpu_check.py                   # GPU availability check
-├── tests/                             # pytest suite
-└── artifacts/                         # Splits, metrics, plots, exploration outputs
+├── app.py                             # FastAPI production application & routes
+├── frontend.html                      # Interactive web interface with Grad-CAM
+├── run_server.py                      # CLI server launcher
+├── Dockerfile                         # Production container image
+├── docker-compose.yml                 # 1-command container orchestration
+├── DEPLOYMENT.md                      # Detailed deployment guide
+├── tests/                             # pytest test suite (including test_api.py)
+└── artifacts/                         # Splits, models, metrics, plots, exploration
 ```
-
-> Trained model files (`*.keras`, `*.h5`, `artifacts/models/`) are git-ignored; train locally to reproduce them.
 
 ---
 
-## 🛣️ Possible Next Steps
+## 🌐 Web Application & REST API
 
-- Improve meningioma recall (stronger fine-tuning, Stage B, or a larger backbone)
-- Add k-fold / multi-seed runs for confidence intervals
-- External validation on an independent MRI dataset
-- Lightweight demo app for inference + Grad-CAM
+NeuroScan AI includes an interactive, browser-based user interface and a FastAPI backend with live Grad-CAM heatmap visualization.
+
+### Start the Local Server
+```bash
+python run_server.py --port 8000
+```
+- **Web Interface**: [http://localhost:8000](http://localhost:8000)
+- **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
+
+### Run with Docker Compose
+```bash
+docker compose up --build
+```
+
+For full deployment instructions on Render, Railway, Hugging Face, or Cloud VMs, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 
 ---
 

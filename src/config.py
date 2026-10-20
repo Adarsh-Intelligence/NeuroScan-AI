@@ -12,8 +12,11 @@ from pathlib import Path
 PROJECT_ROOT: Path = Path(__file__).resolve().parents[1]
 
 # Existing dataset folder (detected during inspection; never modified).
+# Auto-detect from either the NeuroScan-AI root or the sibling project directory.
 DATASET_DIR_NAME: str = "DATASET FOR NEROSCAN AI"
-DATASET_DIR: Path = PROJECT_ROOT / DATASET_DIR_NAME
+_candidate1 = PROJECT_ROOT / DATASET_DIR_NAME
+_candidate2 = PROJECT_ROOT.parent / "BRAIN TUMOR MRI IMAGE CLASSIFICATION" / DATASET_DIR_NAME
+DATASET_DIR: Path = _candidate1 if _candidate1.is_dir() else _candidate2
 
 ARTIFACTS_DIR: Path = PROJECT_ROOT / "artifacts"
 SPLITS_DIR: Path = ARTIFACTS_DIR / "splits"
@@ -51,24 +54,28 @@ class DataConfig:
 
 @dataclass
 class AugmentConfig:
-    """Conservative, anatomy-preserving augmentation (training data only)."""
+    """Conservative, anatomy-preserving augmentation (training data only).
 
-    rotation_factor: float = 10.0 / 360.0  # +/- 10 degrees
-    translation_factor: float = 0.08       # +/- 8 % width/height
-    zoom_factor: float = 0.10              # +/- 10 %
-    horizontal_flip: bool = True           # brain is roughly left-right symmetric
-    brightness_delta: float = 0.10         # mild, fraction of [0,1] range
-    contrast_factor: float = 0.10
+    Slightly increased augmentation to improve meningioma generalization, while
+    keeping transformations medically realistic for brain MRI scans.
+    """
+
+    rotation_factor: float = 12.0 / 360.0  # +/- 12 degrees (slightly wider)
+    translation_factor: float = 0.08        # +/- 8 % width/height
+    zoom_factor: float = 0.12               # +/- 12 % (slightly wider)
+    horizontal_flip: bool = True            # brain is roughly left-right symmetric
+    brightness_delta: float = 0.12          # mild, fraction of [0,1] range
+    contrast_factor: float = 0.12
 
 
 @dataclass
 class TrainConfig:
-    epochs: int = 40
+    epochs: int = 50
     learning_rate: float = 1e-3
-    early_stopping_patience: int = 8
-    reduce_lr_patience: int = 3
-    reduce_lr_factor: float = 0.3
-    min_lr: float = 1e-6
+    early_stopping_patience: int = 10
+    reduce_lr_patience: int = 4
+    reduce_lr_factor: float = 0.25
+    min_lr: float = 1e-7
     monitor: str = "val_loss"
     use_class_weights: bool = True
     mixed_precision: bool = False
@@ -76,13 +83,13 @@ class TrainConfig:
 
 @dataclass
 class EfficientNetConfig:
-    dropout: float = 0.3
-    head_epochs: int = 15
+    dropout: float = 0.35
+    head_epochs: int = 20
     head_learning_rate: float = 1e-3
-    finetune_epochs: int = 20
-    finetune_learning_rate: float = 1e-5
-    finetune_unfreeze_from: str = "block6a_expand_conv"  # unfreeze block6, block7, top
-    early_stopping_patience: int = 6
+    finetune_epochs: int = 30
+    finetune_learning_rate: float = 5e-6  # lower LR for stable fine-tuning
+    finetune_unfreeze_from: str = "block5a_expand_conv"  # unfreeze from block5 for more capacity
+    early_stopping_patience: int = 8
 
 
 @dataclass

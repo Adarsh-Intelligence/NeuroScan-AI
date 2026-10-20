@@ -25,6 +25,33 @@ from . import config as C
 AUTOTUNE = None  # set lazily to avoid importing TF at module import time
 
 
+def resolve_filepath(rel: str | Path) -> Path:
+    """Resolve a manifest filepath to an absolute path.
+
+    Tries, in order:
+    1. PROJECT_ROOT / rel  (standard case)
+    2. DATASET_DIR.parent / rel  (manifests generated in the sibling project)
+    3. The path as absolute, if it is already absolute.
+
+    Raises FileNotFoundError if none resolves to an existing file.
+    """
+    rel = Path(rel)
+    if rel.is_absolute():
+        if rel.is_file():
+            return rel
+        raise FileNotFoundError(f"Image not found (absolute path): {rel}")
+    cands = [
+        C.PROJECT_ROOT / rel,
+        C.DATASET_DIR.parent / rel,
+    ]
+    for c in cands:
+        if c.is_file():
+            return c
+    raise FileNotFoundError(
+        f"Image not found: {rel}\n  Tried: {', '.join(str(c) for c in cands)}"
+    )
+
+
 def preprocessing_spec(model_name: str, image_size=(224, 224)) -> dict:
     """Serializable description of preprocessing, saved next to each model."""
     common = {
@@ -46,10 +73,9 @@ def load_image(path: str | Path, image_size=(224, 224)) -> np.ndarray:
     """Load an image file safely -> uint8 array (H, W, 3) RGB, resized.
 
     Raises ``ValueError`` with the file path if the image cannot be decoded.
+    Resolves relative manifest paths against PROJECT_ROOT or DATASET_DIR.parent.
     """
-    path = Path(path)
-    if not path.is_file():
-        raise FileNotFoundError(f"Image not found: {path}")
+    path = resolve_filepath(path)
     try:
         with Image.open(path) as im:
             im = im.convert("RGB").resize((image_size[1], image_size[0]), Image.Resampling.BILINEAR)
@@ -88,10 +114,14 @@ def make_dataset(df: pd.DataFrame, image_size=(224, 224), batch_size: int = 16, 
 
     Augmentation is applied **only** when ``training=True`` and an augmenter is given.
     Decoded images are cached as uint8 (≈150 KB each) before augmentation.
+
+    Paths are resolved via ``resolve_filepath`` which checks both PROJECT_ROOT and
+    DATASET_DIR.parent so manifests copied from a sibling project work correctly.
     """
     import tensorflow as tf
 
-    paths = [str(C.PROJECT_ROOT / fp) for fp in df["filepath"]]
+    # Resolve manifest paths to absolute strings for tf.data
+    paths = [str(resolve_filepath(fp)) for fp in df["filepath"]]
     labels = df["label"].astype("int32").to_numpy()
     ds = tf.data.Dataset.from_tensor_slices((paths, labels))
     ds = ds.map(lambda p, y: (_decode_resize(p, image_size), y), num_parallel_calls=tf.data.AUTOTUNE)

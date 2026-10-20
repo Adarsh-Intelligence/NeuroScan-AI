@@ -1,0 +1,11 @@
+true,pred,count
+glioma,meningioma,26
+meningioma,pituitary,23
+meningioma,no_tumor,6
+no_tumor,pituitary,3
+no_tumor,meningioma,3
+glioma,pituitary,2
+glioma,no_tumor,1
+meningioma,glioma,1
+no_tumor,glioma,1
+pituitary,meningioma,1
