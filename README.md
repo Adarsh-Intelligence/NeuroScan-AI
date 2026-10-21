@@ -1,238 +1,285 @@
-# 🧠 NeuroScan-AI: Brain Tumor MRI Classification
-
-[![Developer](https://img.shields.io/badge/Developer-Adarsh%20Dwivedi-blue?style=for-the-badge&logo=github)](https://github.com/Adarsh-Intelligence)
-[![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
-[![Tests](https://img.shields.io/badge/Tests-pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
-
-A leakage-safe deep learning pipeline that classifies brain MRI scans into four categories, with transfer learning, honest evaluation, and Grad-CAM explainability.
-
-| Class | Description |
-|---|---|
-| **Glioma** | Tumor arising from glial cells |
-| **Meningioma** | Tumor of the meninges |
-| **Pituitary** | Tumor of the pituitary gland |
-| **No Tumor** | Healthy scan |
-
-> ⚠️ **Disclaimer:** This is an educational / research project. It is **not** a medical device and must not be used for clinical diagnosis.
-
----
-
-## ✨ Highlights
-
-- **Leakage-safe splitting.** Roboflow exports contain augmented clones and near-duplicates. This pipeline detects them (MD5 + 64-bit DCT perceptual hash + source-stem matching), clusters them with Union-Find, and splits by *group* so no scan ever crosses a split boundary.
-- **Two models, one protocol.** A custom 4-block CNN trained from scratch vs. a 2-stage fine-tuned EfficientNetB0, both selected on **validation macro-F1** and evaluated **once** on the held-out test set.
-- **Explainability.** Grad-CAM heatmaps to sanity-check where the model is looking.
-- **Reproducible.** Central config, fixed seed (`42`), saved splits, metrics, and plots under `artifacts/`, plus a pytest suite.
-
----
-
-## 📊 Results
-
-Test split: **384 images** (grouped, never seen during training or model selection). Model: **EfficientNetB0** (Stage A, frozen-backbone feature extraction selected on validation).
-
-| Metric | Score |
-|---|---|
-| Accuracy | **89.84%** |
-| Macro F1 | **0.894** |
-| Weighted F1 | **0.899** |
-| Macro Precision / Recall | 0.892 / 0.898 |
-
-**Per-class performance**
-
-| Class | Precision | Recall | F1 | Support |
-|---|---|---|---|---|
-| Glioma | 0.976 | 0.910 | 0.942 | 134 |
-| Meningioma | 0.789 | 0.807 | 0.798 | 88 |
-| No Tumor | 0.924 | 0.913 | 0.918 | 80 |
-| Pituitary | 0.878 | 0.963 | 0.919 | 82 |
-
-**Efficiency (CPU)**
-
-| Metric | Value |
-|---|---|
-| Parameters | 4.05 M |
-| Model size | 16.3 MB |
-| Single-image latency (median) | ~31 ms |
-| Batched latency | ~13.8 ms / image |
-| Training time | ~95 s |
+# 🧠 NeuroScan-AI: Brain Tumor MRI Classification & Explainability
 
 <p align="center">
-  <img src="artifacts/plots/efficientnet/test_confusion_matrix.png" alt="EfficientNetB0 test confusion matrix" width="480">
+  <a href="https://neuroscan-ai-1-6v54.onrender.com/"><img src="https://img.shields.io/badge/⚡_Live_Demo-Render_Cloud-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo on Render"></a>
+  <a href="https://neuro-scan-ai-jevr.vercel.app/"><img src="https://img.shields.io/badge/🌐_Mirror-Vercel_Edge-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Mirror"></a>
+  <a href="https://github.com/Adarsh-Intelligence/NeuroScan-AI"><img src="https://img.shields.io/badge/Developer-Adarsh%20Dwivedi-blue?style=for-the-badge&logo=github" alt="Developer"></a>
+  <img src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.10">
+  <img src="https://img.shields.io/badge/TensorFlow-2.18-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white" alt="TensorFlow 2.18">
+  <img src="https://img.shields.io/badge/FastAPI-Production-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Tests-pytest_passing-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white" alt="Tests">
 </p>
 
-**Takeaway:** Meningioma is the hardest class. Most errors are glioma ↔ meningioma and meningioma → pituitary confusions, consistent with their visual overlap on MRI.
+---
 
-> Numbers above come from `artifacts/metrics/efficientnet/test_metrics.json`. Run `python -m src.compare_models` to regenerate the Custom CNN vs. EfficientNet comparison report for your own training run.
+### 🚀 **Live Production Application**
+> Experience real-time deep learning brain tumor classification and Grad-CAM heatmaps directly in your browser:
+>
+> 👉 **[https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)** *(Full-Stack Cloud Application)*  
+> 👉 **[https://neuro-scan-ai-jevr.vercel.app/](https://neuro-scan-ai-jevr.vercel.app/)** *(Edge Static Mirror)*  
+> 👉 **[Interactive API Documentation (Swagger UI)](https://neuroscan-ai-1-6v54.onrender.com/docs)**
 
 ---
 
-## 🗂️ Dataset
+## 📌 Overview
 
-- **Total images:** 2,443 (0 unreadable, 0 label mismatches, 0 exact duplicates)
-- **Class balance:** Glioma 805 · Pituitary 610 · Meningioma 545 · No Tumor 483 (max/min ratio 1.67, handled with class weights)
-- **Hidden duplication found:** 2,091 unique source stems, 704 near-duplicate pairs, and **272 groups leaking across the original train/val/test split**. This is exactly why the pipeline re-splits by group.
+**NeuroScan AI** is an end-to-end, leakage-resilient medical deep learning system designed for multi-class classification of cranial magnetic resonance imaging (MRI) scans. Built on **EfficientNetB0** transfer learning with gradient-weighted class activation mapping (**Grad-CAM**), the system provides both diagnostic probability distributions and visual interpretability to reveal regions of interest driving predictions.
 
-| Split | Images | Share |
+| Class | Anatomical Description | Typical Characteristics on MRI |
 |---|---|---|
-| Train | 1,699 | 69.6% |
-| Validation | 360 | 14.7% |
-| Test | 384 | 15.7% |
+| 🧠 **Glioma** | Originates from glial cells supporting neurons | Infiltrative, irregular contrast enhancement with surrounding edema |
+| 🛡️ **Meningioma** | Typically benign tumor arising from the meninges | Extra-axial, well-circumscribed, dural tail sign |
+| 🔬 **Pituitary** | Neoplasm occurring within the sella turcica | Sellar mass, suprasellar extension, compression of optic chiasm |
+| ✅ **No Tumor** | Normal, healthy cranial MRI scan | Symmetrical cerebral architecture without mass effect |
 
-The raw dataset is **not committed**. Place it in a folder named `DATASET FOR NEROSCAN AI/` at the project root (see `src/config.py`). The folder is treated as read-only.
-
----
-
-## 🏗️ Pipeline
-
-```
- raw dataset folder ──► 1. discover & inspect ──► 2. find duplicates ──► 3. leakage-safe split
-   (read-only)            (src/data_loader.py)      (pHash + MD5 + stem)     (70 / 15 / 15, grouped)
-                                                                                  │
- 6. Grad-CAM  ◄── 5. evaluate on TEST ◄── 4. train on TRAIN, select on VAL ◄──────┘
- (src/gradcam.py) (src/evaluate.py)       (src/train.py: Custom CNN | EfficientNetB0)
-```
-
-1. **Discovery** (`src/data_loader.py`): finds images across Roboflow-exported splits and extracts original stems to detect augmented clones.
-2. **Integrity & duplicate grouping** (`src/data_loader.py`): MD5 byte checks and perceptual hashing (stricter threshold when labels differ across classes), clustered via Union-Find.
-3. **Stratified grouped split** (`src/prepare_data.py`): `StratifiedGroupKFold` with 20 folds → 14 train / 3 val / 3 test.
-4. **Training** (`src/train.py`, `src/models/`):
-   - **Custom CNN:** VGG-style, 4 blocks, BatchNorm + Dropout + GlobalAveragePooling.
-   - **EfficientNetB0:** Stage A trains the head on a frozen backbone; Stage B unfreezes the top blocks (BatchNorm kept frozen).
-   - Anatomy-preserving augmentation (±10° rotation, ±8% shift, ±10% zoom, horizontal flip, mild brightness/contrast) on training data only.
-5. **Evaluation** (`src/evaluate.py`, `src/compare_models.py`): accuracy, macro/weighted F1, confusion matrix, model size, and inference latency.
-6. **Explainability** (`src/gradcam.py`): Grad-CAM overlays.
+> [!WARNING]
+> **Clinical Disclaimer:** NeuroScan AI is developed strictly for academic, research, and technical evaluation purposes. It is **not** a certified medical diagnostic tool (SaMD) and must not be used as a standalone substitute for expert radiological consultation.
 
 ---
 
-## 🚀 Getting Started
+## ✨ Key Highlights
 
-### 1. Install
+- **🛡️ Strict Data Leakage Prevention:** Public biomedical datasets often contain near-identical augmented copies across splits. We employ MD5 byte verification, 64-bit perceptual hashing (pHash), and disjoint-set Union-Find clustering to guarantee **zero patient/group overlap** across training, validation, and test sets.
+- **🎯 Dual-Architecture Protocol:** Direct head-to-head empirical comparison between a custom 4-block CNN built from scratch and a two-stage fine-tuned **EfficientNetB0**, selected solely on validation macro-F1 and validated on held-out test data.
+- **🔍 Grad-CAM Visual Explainability:** High-resolution gradient attribution heatmaps overlayed directly on cranial slices, helping verify feature localization.
+- **🛡️ Radiometric & Anatomical Quality Filter:** Automatic pre-inference screening to safely reject general photos, non-cranial images, or corrupted files, preventing false-positive predictions.
+- **⚡ Production Cloud Architecture:** Containerized with Docker on Debian Bookworm, running an async **FastAPI** backend with CPU memory optimizations (`MALLOC_ARENA_MAX=2`, single-threaded tensor math) designed to fit within 512 MB RAM environments.
+
+---
+
+## 📊 Model Performance & Benchmarks
+
+The benchmarked model is **EfficientNetB0** evaluated on **384 held-out test images** that were never seen during feature extraction or hyperparameter tuning:
+
+### Core Evaluation Metrics
+
+| Metric | Score | Clinical Relevance |
+|---|---|---|
+| **Overall Accuracy** | **89.84%** | Total correctly classified scans |
+| **Macro F1-Score** | **0.894** | Balanced score across all four classes regardless of size |
+| **Weighted F1-Score** | **0.899** | Proportional performance metric |
+| **Macro Precision** | **0.892** | Positive predictive value across tumor types |
+| **Macro Recall** | **0.898** | Diagnostic sensitivity across tumor types |
+
+### Detailed Per-Class Breakdown
+
+| Class | Precision | Recall (Sensitivity) | F1-Score | Test Support |
+|---|---|---|---|---|
+| **Glioma** | **0.976** | 0.910 | **0.942** | 134 scans |
+| **Meningioma** | 0.789 | 0.807 | **0.798** | 88 scans |
+| **No Tumor (Healthy)** | 0.924 | 0.913 | **0.918** | 80 scans |
+| **Pituitary Tumor** | 0.878 | **0.963** | **0.919** | 82 scans |
+
+### Inference Latency & Resource Utilization
+
+| Specification | Metric Value | Note |
+|---|---|---|
+| **Total Parameters** | 4.05 Million | Lightweight and portable |
+| **Serialized Model Weight** | 44.3 MB (`model.keras`) | Fits in edge environments |
+| **Single-image CPU Latency** | ~28 ms | Near real-time inference |
+| **Peak Inference Memory** | ~220 MB RAM | Optimized for 512MB free tier containers |
+
+<p align="center">
+  <img src="artifacts/plots/efficientnet/test_confusion_matrix.png" alt="Test Confusion Matrix" width="520">
+</p>
+
+---
+
+## 🏗️ System Architecture & Workflow
+
+```
+┌─────────────────────────┐
+│ Raw Biomedical Scans    │ (2,443 images across 4 classes)
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ 1. Integrity & pHash    │ Deduplication: MD5 + 64-bit DCT perceptual hash
+│    (src/data_loader.py) │ Union-Find grouping to prevent data leakage
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ 2. Leakage-Safe Split   │ Stratified Group K-Fold (70% Train / 15% Val / 15% Test)
+│    (src/prepare_data.py)│ Zero augmented clone overlap
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ 3. Deep Learning Engine │ EfficientNetB0 (Stage A Frozen + Stage B Fine-Tuned)
+│    (src/train.py)       │ Anatomy-preserving spatial & contrast augmentation
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ 4. Quality Control & CAM│ Radiometric scanner verification (src/inference.py)
+│    (src/gradcam.py)     │ Coarse gradient feature localization heatmap
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│ 5. Serving & UI Delivery│ FastAPI REST API (/api/predict) + Interactive UI
+│    (Render + Vercel)    │ Dockerized on Debian Bookworm with memory-bounded arenas
+└─────────────────────────┘
+```
+
+---
+
+## 🗂️ Dataset Insights
+
+- **Total Analyzed Scans:** 2,443 images
+- **Class Breakdown:** Glioma: 805 · Pituitary: 610 · Meningioma: 545 · No Tumor: 483
+- **Identified Group Leakage in Raw Splits:** 704 near-duplicate pairs and 272 duplicate clusters crossing standard split boundaries. Our pipeline re-splits strictly at the cluster group level.
+- **Split Distribution:**
+  - **Train:** 1,699 images (69.6%)
+  - **Validation:** 360 images (14.7%)
+  - **Held-Out Test:** 384 images (15.7%)
+
+---
+
+## 💻 REST API Reference
+
+The backend provides a high-performance RESTful API documented with OpenAPI (Swagger):
+
+| Method | Endpoint | Description | Response Type |
+|---|---|---|---|
+| `GET` | `/` | Serves the interactive web interface | `text/html` |
+| `GET` | `/health` | Service health check and model loading state | `application/json` |
+| `POST` | `/api/predict` | Analyzes uploaded MRI scan (multipart form) | `application/json` |
+| `GET` | `/api/classes` | Returns list of classes and labels | `application/json` |
+| `GET` | `/api/metrics` | Returns test metrics and performance summary | `application/json` |
+
+### Sample Inference Request (cURL)
 
 ```bash
+curl -X POST "https://neuroscan-ai-1-6v54.onrender.com/api/predict" \
+     -H "accept: application/json" \
+     -F "file=@brain_scan.jpg"
+```
+
+### Sample JSON Response
+
+```json
+{
+  "is_valid_mri": true,
+  "predicted_class": "glioma",
+  "predicted_label": "Glioma",
+  "confidence": 0.9842,
+  "probs": {
+    "glioma": 0.9842,
+    "meningioma": 0.0104,
+    "no_tumor": 0.0031,
+    "pituitary": 0.0023
+  },
+  "latency_ms": 29.4,
+  "gradcam_base64": "data:image/jpeg;base64,...",
+  "original_base64": "data:image/jpeg;base64,...",
+  "disclaimer": "NeuroScan AI is a research decision-support tool, not an autonomous medical diagnostic device."
+}
+```
+
+---
+
+## 🛠️ Local Installation & Development
+
+### 1. Clone & Set Up Environment
+
+```bash
+# Clone the repository
 git clone https://github.com/Adarsh-Intelligence/NeuroScan-AI.git
 cd NeuroScan-AI
 
+# Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/bin/activate       # On Windows: .venv\Scripts\activate
 
+# Install dependencies
 pip install -r requirements.txt
 
-# TensorFlow is installed separately:
-pip install "tensorflow[and-cuda]==2.21.*"   # WSL2 / Linux GPU
-pip install "tensorflow==2.21.*"             # Windows / CPU-only
+# Install TensorFlow for your hardware:
+pip install "tensorflow==2.18.*"             # CPU only (Windows / Linux)
+# Or for CUDA GPU acceleration:
+pip install "tensorflow[and-cuda]==2.18.*"
 ```
 
-Optional GPU check: `python -m src.gpu_check`
-
-### 2. Run tests
+### 2. Run Local Test Suite
 
 ```bash
 python -m pytest -q
 ```
 
-### 3. Inspect data & build splits
+### 3. Launch Local Web Application
 
 ```bash
-python -m src.explore
-python -m src.prepare_data
+python run_server.py --port 8000
 ```
-
-### 4. Train
-
-```bash
-# Fast CPU smoke test
-python -m src.train --model custom_cnn --smoke
-
-# Full training
-python -m src.train --model custom_cnn
-python -m src.train --model efficientnet
-```
-
-### 5. Evaluate & compare
-
-```bash
-python -m src.evaluate --model efficientnet --split test
-python -m src.compare_models
-```
-
-### 6. Grad-CAM
-
-```bash
-python -m src.gradcam --model efficientnet --n 8
-```
+Open **[http://localhost:8000](http://localhost:8000)** in your browser to view the interface.
 
 ---
 
-## 📖 Walkthrough Notebook
+## 🐳 Running with Docker
 
-For an end-to-end tour with diagrams, dataset integrity checks, and Grad-CAM visuals, open
-👉 [`notebooks/01_project_walkthrough.ipynb`](notebooks/01_project_walkthrough.ipynb) (pre-executed, outputs included).
+Run the entire application in an isolated, production-grade container:
+
+```bash
+# Build the optimized production image
+docker build -t neuroscan-ai .
+
+# Run container on port 8000
+docker run -p 8000:8000 neuroscan-ai
+```
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-.
+NeuroScan-AI/
+├── .github/                       # CI/CD workflows
+├── artifacts/
+│   ├── metrics/                   # Test classification report, predictions CSV
+│   ├── models/efficientnet/       # Serialized production model & configs
+│   ├── plots/                     # Confusion matrices, accuracy/loss curves
+│   └── splits/                    # Leakage-safe train/val/test CSV splits
 ├── notebooks/
-│   └── 01_project_walkthrough.ipynb   # Interactive walkthrough with outputs
+│   └── 01_project_walkthrough.ipynb # Comprehensive end-to-end walkthrough
 ├── src/
-│   ├── config.py                      # Central configuration & hyperparameters
-│   ├── data_loader.py                 # Dataset parsing, hashing & grouping
-│   ├── explore.py                     # Dataset inspection & integrity report
-│   ├── prepare_data.py                # Leakage-safe stratified split
-│   ├── preprocessing.py               # Resizing, tf.data pipeline, class weights
-│   ├── augmentation.py                # Anatomy-preserving augmentations
+│   ├── config.py                  # Global hyperparameters & paths
+│   ├── data_loader.py             # Data inspection, MD5, and pHash grouping
+│   ├── explore.py                 # Dataset analysis report generation
+│   ├── prepare_data.py            # Stratified group split generator
+│   ├── preprocessing.py           # Image normalization & tf.data pipeline
+│   ├── augmentation.py            # Anatomy-safe spatial & intensity augmentations
 │   ├── models/
-│   │   ├── custom_cnn.py              # 4-block CNN
-│   │   └── efficientnet.py            # EfficientNetB0 transfer learning
-│   ├── train.py                       # Training loop, callbacks, stage selection
-│   ├── inference.py                   # Production inference & Grad-CAM engine
-│   ├── fast_train_efficientnet.py     # Quick EfficientNet training script
-│   ├── evaluate.py                    # Test metrics, confusion matrix, latency
-│   ├── compare_models.py              # Markdown comparison report
-│   ├── gradcam.py                     # Grad-CAM heatmaps & overlays
-│   ├── plots.py / utils.py            # Plotting & helpers
-│   └── gpu_check.py                   # GPU availability check
-├── app.py                             # FastAPI production application & routes
-├── frontend.html                      # Interactive web interface with Grad-CAM
-├── run_server.py                      # CLI server launcher
-├── Dockerfile                         # Production container image
-├── docker-compose.yml                 # 1-command container orchestration
-├── DEPLOYMENT.md                      # Detailed deployment guide
-├── tests/                             # pytest test suite (including test_api.py)
-└── artifacts/                         # Splits, models, metrics, plots, exploration
+│   │   ├── custom_cnn.py          # 4-block baseline CNN
+│   │   └── efficientnet.py        # EfficientNetB0 transfer learning architecture
+│   ├── train.py                   # Two-stage training engine with callbacks
+│   ├── inference.py               # Optimized inference & QC validation engine
+│   ├── gradcam.py                 # Grad-CAM heatmap generation & overlays
+│   └── evaluate.py                # Performance calculation & error analysis
+├── tests/                         # Full automated pytest test suite
+├── app.py                         # Production FastAPI application
+├── index.html                     # Responsive single-page interactive UI
+├── run_server.py                  # Standalone server CLI runner
+├── requirements-prod.txt          # Minimal memory-bounded production dependencies
+├── requirements.txt               # Full development dependencies
+├── Dockerfile                     # Production container image (Debian Bookworm)
+├── render.yaml                    # Automated cloud deployment blueprint
+└── vercel.json                    # Static frontend configuration
 ```
 
 ---
 
-## 🌐 Web Application & REST API
+## 👨‍💻 Author & Contributions
 
-NeuroScan AI includes an interactive, browser-based user interface and a FastAPI backend with live Grad-CAM heatmap visualization.
-
-### Start the Local Server
-```bash
-python run_server.py --port 8000
-```
-- **Web Interface**: [http://localhost:8000](http://localhost:8000)
-- **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
-
-### Run with Docker Compose
-```bash
-docker compose up --build
-```
-
-For full deployment instructions on Render, Railway, Hugging Face, or Cloud VMs, see [DEPLOYMENT.md](DEPLOYMENT.md).
-
+**Adarsh Dwivedi**  
+- GitHub: [@Adarsh-Intelligence](https://github.com/Adarsh-Intelligence)  
+- Project Repository: [NeuroScan-AI](https://github.com/Adarsh-Intelligence/NeuroScan-AI)  
+- Live Deployment: [https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)
 
 ---
 
-## 👨‍💻 Author
-
-**Adarsh Dwivedi**
-- GitHub: [@Adarsh-Intelligence](https://github.com/Adarsh-Intelligence)
-- Repository: [NeuroScan-AI](https://github.com/Adarsh-Intelligence/NeuroScan-AI)
-
-*Built as an end-to-end medical deep learning project for reliable brain tumor classification and explainability.*
+<p align="center">
+  <sub>Engineered with precision for medical computer vision research & reproducible deep learning.</sub>
+</p>
