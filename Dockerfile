@@ -36,7 +36,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ /app/src/
 COPY artifacts/models/efficientnet/ /app/artifacts/models/efficientnet/
 COPY artifacts/metrics/efficientnet/ /app/artifacts/metrics/efficientnet/
-COPY frontend.html /app/frontend.html
+COPY index.html /app/index.html
 COPY app.py /app/app.py
 COPY run_server.py /app/run_server.py
 
