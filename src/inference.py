@@ -75,10 +75,12 @@ class NeuroScanEngine:
     def warmup(self):
         """Run a dummy forward pass to eliminate cold-start latency."""
         if not self._warmup_done:
+            import gc
             dummy = np.zeros((1, 224, 224, 3), dtype=np.float32)
-            _ = self.model.predict(dummy, verbose=0)
+            _ = self.model(dummy, training=False)
             self._warmup_done = True
-            log.info("Model warmup completed.")
+            gc.collect()
+            log.info("Model warmup completed (memory freed).")
 
     def preprocess_bytes(self, image_bytes: bytes, target_size=(224, 224)) -> Tuple[np.ndarray, np.ndarray]:
         """Preprocess raw image bytes -> (float32 array [0,255] shape (224,224,3), original uint8 RGB array)."""
@@ -255,9 +257,9 @@ class NeuroScanEngine:
                     "disclaimer": "The uploaded image was rejected by the Brain MRI Quality Control filter."
                 }
 
-        # Forward pass
+        # Direct forward pass without tf.data iterator allocation overhead
         batch = np.expand_dims(img_224, axis=0)
-        raw_probs = self.model.predict(batch, verbose=0)[0]
+        raw_probs = self.model(batch, training=False).numpy()[0]
 
         top_idx = int(np.argmax(raw_probs))
         top_class = self.class_names[top_idx]
@@ -280,6 +282,9 @@ class NeuroScanEngine:
 
         orig_b64 = self.image_to_base64(orig_rgb)
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+
+        import gc
+        gc.collect()
 
         return {
             "is_valid_mri": True,

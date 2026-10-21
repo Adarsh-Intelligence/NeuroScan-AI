@@ -5,11 +5,18 @@
 FROM python:3.10-slim-bookworm
 
 # Prevent python from buffering stdout/stderr and writing .pyc files
+# Critical memory optimizations for 512MB RAM container limit:
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=8000 \
-    TF_CPP_MIN_LOG_LEVEL=2 \
-    TF_ENABLE_ONEDNN_OPTS=0
+    TF_CPP_MIN_LOG_LEVEL=3 \
+    TF_ENABLE_ONEDNN_OPTS=0 \
+    MALLOC_ARENA_MAX=2 \
+    TF_NUM_INTRAOP_THREADS=1 \
+    TF_NUM_INTEROP_THREADS=1 \
+    OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1
 
 # Install required system packages for OpenCV and healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -27,9 +34,9 @@ RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 # Install CPU-optimized TensorFlow for container deployment
 RUN pip install --no-cache-dir "tensorflow-cpu==2.18.*"
 
-# Copy and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy and install lightweight production dependencies
+COPY requirements-prod.txt .
+RUN pip install --no-cache-dir -r requirements-prod.txt
 
 # Copy application source code, models, and UI
 COPY src/ /app/src/
