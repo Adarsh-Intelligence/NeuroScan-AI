@@ -239,16 +239,26 @@ python -m src.compare_models</pre>
 </script>
 <script>
 (function(){
+  function normalizeApiUrl(raw) {
+    if (!raw) return '';
+    raw = raw.trim().replace(/\/+$/, '');
+    if (!raw.endsWith('/api/predict') && !raw.endsWith('/predict')) {
+      raw = raw + '/api/predict';
+    }
+    return raw;
+  }
+
   var defaultApi = (window.location.protocol === 'file:') ? 'http://localhost:8000/api/predict' :
                    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('onrender.com') !== -1) ? '/api/predict' :
                    'https://neuroscan-ai.onrender.com/api/predict';
-  var API = localStorage.getItem('NEUROSCAN_API_URL') || defaultApi;
+  var rawStored = localStorage.getItem('NEUROSCAN_API_URL');
+  var API = rawStored ? normalizeApiUrl(rawStored) : defaultApi;
   var C = [['Glioma','glioma'],['Meningioma','meningioma'],['No tumor','no_tumor'],['Pituitary','pituitary']];
   var f = document.getElementById('file'), drop = document.getElementById('drop'), pv = document.getElementById('pv'), hint = document.getElementById('hint'), go = document.getElementById('go'), out = document.getElementById('out'), note = document.getElementById('mode'), file = null, origUrl = null, camUrl = null;
   
   function updateModeNotice(){
     if(API){
-      note.innerHTML = 'Backend: <code style="color:var(--brass);font-size:11px">' + API + '</code> &bull; <a href="#" id="change-api" style="color:var(--bright);text-decoration:underline;cursor:pointer">Change</a>';
+      note.innerHTML = 'Backend: <code style="color:var(--brass);font-size:11px">' + API + '</code> &bull; <a href="#" id="change-api" style="color:var(--bright);text-decoration:underline;cursor:pointer">Change Backend URL</a>';
     } else {
       note.innerHTML = 'Static preview mode &bull; <a href="#" id="change-api" style="color:var(--brass);text-decoration:underline;cursor:pointer">Connect Live Backend</a>';
     }
@@ -256,11 +266,12 @@ python -m src.compare_models</pre>
     if(btn){
       btn.addEventListener('click', function(e){
         e.preventDefault();
-        var cur = localStorage.getItem('NEUROSCAN_API_URL') || '';
-        var u = prompt('Enter your NeuroScan AI live backend URL (e.g. https://your-backend.onrender.com/api/predict or http://localhost:8000/api/predict):', cur);
+        var cur = localStorage.getItem('NEUROSCAN_API_URL') || API || '';
+        var u = prompt('Enter your live Render backend URL:\n(e.g., https://your-service.onrender.com)', cur);
         if(u !== null){
           if(u.trim()){
-            localStorage.setItem('NEUROSCAN_API_URL', u.trim());
+            var cleaned = normalizeApiUrl(u);
+            localStorage.setItem('NEUROSCAN_API_URL', cleaned);
           } else {
             localStorage.removeItem('NEUROSCAN_API_URL');
           }
@@ -377,8 +388,16 @@ python -m src.compare_models</pre>
       })
       .then(show)
       .catch(function(err){
-        console.warn('Backend fetch failed, using local simulation:', err);
-        note.textContent='Backend unavailable; showing simulated preview mode.';
+        console.warn('Backend fetch failed:', API, err);
+        note.innerHTML='<span style="color:#e07a5f">Backend unreachable (' + (err.message||'NetworkError') + ') at <code>' + API + '</code></span> &bull; <a href="#" id="retry-api" style="color:var(--bright);text-decoration:underline;cursor:pointer">Change Backend URL</a> (Render Free Tier may be waking up, wait 30s & retry).';
+        var retryBtn = document.getElementById('retry-api');
+        if(retryBtn){
+          retryBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            var btn = document.getElementById('change-api');
+            if(btn) btn.click();
+          });
+        }
         setTimeout(function(){
           show(demo(file.size%997+1));
         },800);
