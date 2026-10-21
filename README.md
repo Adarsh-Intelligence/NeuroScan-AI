@@ -16,9 +16,10 @@
 ### 🚀 **Live Production Application**
 > Experience real-time deep learning brain tumor classification and Grad-CAM heatmaps directly in your browser:
 >
-> 👉 **[https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)** *(Full-Stack Cloud Application)*  
-> 👉 **[https://neuro-scan-ai-jevr.vercel.app/](https://neuro-scan-ai-jevr.vercel.app/)** *(Edge Static Mirror)*  
-> 👉 **[Interactive API Documentation (Swagger UI)](https://neuroscan-ai-1-6v54.onrender.com/docs)**
+> ⚡ **Live Full-Stack App (Render Cloud):** **[https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)**  
+> 🌐 **Interactive Frontend (Vercel Edge):** **[https://neuro-scan-ai-jevr.vercel.app/](https://neuro-scan-ai-jevr.vercel.app/)**  
+> 📊 **Vercel Project Console:** **[https://vercel.com/studyadarsh/neuro-scan-ai-jevr](https://vercel.com/studyadarsh/neuro-scan-ai-jevr)**  
+> 📖 **Interactive API Documentation (Swagger UI):** **[https://neuroscan-ai-1-6v54.onrender.com/docs](https://neuroscan-ai-1-6v54.onrender.com/docs)**
 
 ---
 
@@ -276,7 +277,9 @@ NeuroScan-AI/
 **Adarsh Dwivedi**  
 - GitHub: [@Adarsh-Intelligence](https://github.com/Adarsh-Intelligence)  
 - Project Repository: [NeuroScan-AI](https://github.com/Adarsh-Intelligence/NeuroScan-AI)  
-- Live Deployment: [https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)
+- Live Full-Stack App: [https://neuroscan-ai-1-6v54.onrender.com/](https://neuroscan-ai-1-6v54.onrender.com/)  
+- Live Frontend (Vercel): [https://neuro-scan-ai-jevr.vercel.app/](https://neuro-scan-ai-jevr.vercel.app/)  
+- Vercel Project Console: [https://vercel.com/studyadarsh/neuro-scan-ai-jevr](https://vercel.com/studyadarsh/neuro-scan-ai-jevr)
 
 ---
 
