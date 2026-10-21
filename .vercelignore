@@ -1,0 +1,16 @@
+# Ignore backend files so Vercel treats this repository as a pure static frontend
+# and avoids triggering Python serverless build limits (LAMBDA_SIZE_EXCEEDED).
+
+requirements.txt
+app.py
+run_server.py
+src/
+artifacts/
+notebooks/
+tests/
+Dockerfile
+docker-compose.yml
+render.yaml
+Procfile
+pytest.ini
+.pytest_cache/
