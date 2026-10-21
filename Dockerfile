@@ -2,7 +2,7 @@
 # NeuroScan AI - Production Dockerfile
 # Optimized for Brain Tumor MRI Deep Learning Inference & Grad-CAM Analysis
 # ==============================================================================
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim-bookworm
 
 # Prevent python from buffering stdout/stderr and writing .pyc files
 ENV PYTHONUNBUFFERED=1 \
@@ -13,7 +13,6 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Install required system packages for OpenCV and healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     curl \
     libgl1 \
     libglib2.0-0 \
