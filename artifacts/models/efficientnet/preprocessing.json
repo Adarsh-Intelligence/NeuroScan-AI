@@ -1,0 +1,19 @@
+{
+  "input_shape": [
+    224,
+    224,
+    3
+  ],
+  "color_mode": "RGB",
+  "resize": {
+    "method": "bilinear",
+    "antialias": true,
+    "keep_aspect_ratio": false
+  },
+  "input_dtype": "float32",
+  "input_value_range": [
+    0,
+    255
+  ],
+  "in_model_normalization": "Keras EfficientNetB0 built-in Rescaling + Normalization (ImageNet)"
+}

@@ -1,10 +1,10 @@
 # Raw dataset (kept locally, never committed)
 DATASET FOR NEROSCAN AI/
 
-# Large model files
-artifacts/models/
-*.keras
+# Large model files & checkpoints (exclude intermediate weights, track production model)
 *.h5
+*.keras
+!artifacts/models/efficientnet/model.keras
 
 # Python
 __pycache__/

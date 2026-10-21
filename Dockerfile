@@ -49,7 +49,7 @@ EXPOSE 8000
 
 # Container health probe
 HEALTHCHECK --interval=30s --timeout=10s --start-period=45s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Launch production ASGI server
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+# Launch production ASGI server (dynamically binds to Render's $PORT)
+CMD ["python", "run_server.py"]
