@@ -250,8 +250,12 @@ python -m src.compare_models</pre>
 
   var defaultApi = (window.location.protocol === 'file:') ? 'http://localhost:8000/api/predict' :
                    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.indexOf('onrender.com') !== -1) ? '/api/predict' :
-                   'https://neuroscan-ai.onrender.com/api/predict';
+                   'https://neuroscan-ai-1-6v54.onrender.com/api/predict';
   var rawStored = localStorage.getItem('NEUROSCAN_API_URL');
+  if (rawStored && rawStored.indexOf('neuroscan-ai.onrender.com') !== -1) {
+    localStorage.removeItem('NEUROSCAN_API_URL');
+    rawStored = null;
+  }
   var API = rawStored ? normalizeApiUrl(rawStored) : defaultApi;
   var C = [['Glioma','glioma'],['Meningioma','meningioma'],['No tumor','no_tumor'],['Pituitary','pituitary']];
   var f = document.getElementById('file'), drop = document.getElementById('drop'), pv = document.getElementById('pv'), hint = document.getElementById('hint'), go = document.getElementById('go'), out = document.getElementById('out'), note = document.getElementById('mode'), file = null, origUrl = null, camUrl = null;
