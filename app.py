@@ -56,21 +56,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-FRONTEND_PATH = C.PROJECT_ROOT / "frontend.html"
+def _get_frontend_path() -> Path:
+    for candidate in ("index.html", "frontend.html"):
+        p = C.PROJECT_ROOT / candidate
+        if p.exists():
+            return p
+    return C.PROJECT_ROOT / "index.html"
+
+
+FRONTEND_PATH = _get_frontend_path()
 
 
 @app.get("/", summary="Serve Interactive UI", response_class=FileResponse)
 async def serve_frontend():
     """Serve the complete single-page interactive UI."""
-    if not FRONTEND_PATH.exists():
+    path = _get_frontend_path()
+    if not path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="frontend.html not found on server root",
+            detail="Frontend interface (index.html / frontend.html) not found on server root",
         )
-    return FileResponse(str(FRONTEND_PATH), media_type="text/html")
+    return FileResponse(str(path), media_type="text/html")
 
 
 @app.get("/frontend.html", response_class=FileResponse)
+@app.get("/index.html", response_class=FileResponse)
 async def serve_frontend_alias():
     return await serve_frontend()
 

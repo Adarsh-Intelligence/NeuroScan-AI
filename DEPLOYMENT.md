@@ -112,6 +112,31 @@ The included [`Procfile`](Procfile) specifies the web worker command:
 web: uvicorn app:app --host 0.0.0.0 --port $PORT --workers 1
 ```
 
+### Vercel (Frontend & Edge CDN)
+Vercel is optimal for hosting the frontend application (`frontend.html`) with instant global edge performance.
+
+> **Architecture Note**: TensorFlow ML models cannot run directly inside Vercel Serverless Functions due to the strict 250 MB serverless bundle limit. Deploy the FastAPI backend on **Render**, **Railway**, or **Hugging Face**, and deploy the frontend on **Vercel**.
+
+1. Install the Vercel CLI (or connect your GitHub repository to [vercel.com](https://vercel.com)):
+   ```bash
+   npm i -g vercel
+   ```
+2. Deploy directly from the project directory:
+   ```bash
+   vercel --prod
+   ```
+   The included [`vercel.json`](vercel.json) routes incoming requests directly to `frontend.html`.
+
+3. **Connecting Backend API**:
+   - **Option A (Proxy Rewrite)**: In [`vercel.json`](vercel.json), add a rewrite rule to proxy `/api/*` requests to your hosted backend without CORS:
+     ```json
+     {
+       "source": "/api/:match*",
+       "destination": "https://your-backend.onrender.com/api/:match*"
+     }
+     ```
+   - **Option B (In-App)**: Open your deployed Vercel site, click **Connect Live Backend** at the top of the interface, and paste your backend endpoint (`https://your-backend.onrender.com/api/predict`).
+ 
 ### Hugging Face Spaces (Docker Space)
 1. Create a new Space with the **Docker** SDK.
 2. Push this repo. The included [`Dockerfile`](Dockerfile) will build and serve on port 7860 or 8000 automatically.
