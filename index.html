@@ -85,6 +85,46 @@ footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;max-wi
 @media(max-width:900px){.sec{grid-template-columns:1fr;padding:100px 22px;gap:28px}.lab{position:static}.cards,.facts{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}.nav div a:nth-child(n+3){display:none}.nav{padding-inline:20px}.foot{left:20px;right:20px}.cream{flex-direction:column;align-items:flex-start;gap:12px}}
 @media(max-width:520px){.cards{grid-template-columns:1fr}.bar{grid-template-columns:90px 1fr 44px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+
+/* NeuroScan Guide chatbot */
+.nsf{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:30;width:58px;height:58px;border-radius:50%;border:1px solid #b08d57aa;background:var(--bone);color:#1b1a17;cursor:pointer;display:grid;place-items:center;box-shadow:0 0 0 0 #b08d5766,0 10px 30px #000a;animation:nsp 3.2s ease-out infinite}
+.nsf svg{width:28px;height:28px}
+.nsf .dot{position:absolute;top:2px;right:2px;width:13px;height:13px;border-radius:50%;background:#e07a5f;border:2px solid var(--ink);display:none}
+.nsf.ping .dot{display:block}
+@keyframes nsp{70%{box-shadow:0 0 0 16px #b08d5700,0 10px 30px #000a}100%{box-shadow:0 0 0 0 #b08d5700,0 10px 30px #000a}}
+.nsp{position:fixed;right:20px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:30;width:min(400px,calc(100vw - 24px));height:min(620px,calc(100svh - 130px));display:flex;flex-direction:column;background:#0e0c09f2;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #b08d5766;border-radius:22px;box-shadow:0 30px 80px #000c;overflow:hidden;animation:nsin .35s cubic-bezier(.2,.7,.1,1)}
+.nsp[hidden]{display:none}
+@keyframes nsin{from{opacity:0;transform:translateY(16px) scale(.97)}}
+.nsp header{position:static;mix-blend-mode:normal;pointer-events:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #ffffff14;color:var(--bright)}
+.nsp header b{display:block;font-weight:300;font-size:17px;font-stretch:112%;letter-spacing:.02em}
+.nsp header small{display:block;font-size:11px;color:var(--mute);letter-spacing:.04em;line-height:1.4}
+.nsp .ctl{display:flex;gap:6px;align-items:center}
+.nsp .ctl button,.nsmic{font:inherit;font-size:11px;letter-spacing:.06em;color:var(--bright);background:#1c1712;border:1px solid #b08d5777;border-radius:99px;padding:5px 11px;cursor:pointer}
+.nsp .ctl button[aria-pressed=true],.nsmic.on{background:var(--brass);color:#070707}
+.nsl{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.m{max-width:88%;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.7;animation:nsin .3s ease both}
+.m.b{align-self:flex-start;background:#17130e;border:1px solid #ffffff14;color:var(--bright);border-top-left-radius:4px}
+.m.u{align-self:flex-end;background:var(--bone);color:#1b1a17;border-top-right-radius:4px}
+.m b{font-weight:600}
+.m .g{display:block;margin-top:10px;font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--brass);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.mb{display:grid;grid-template-columns:78px 1fr 40px;gap:8px;align-items:center;margin-top:12px;font-size:11.5px;color:var(--mute)}
+.mb b{text-align:right;font-weight:400;color:var(--bright)}
+.mb u{display:block;height:3px;background:#ffffff1a;text-decoration:none;border-radius:3px;overflow:hidden}
+.mb u i{display:block;height:100%;background:var(--brass);width:0;animation:nsw 1s cubic-bezier(.2,.7,.1,1) .15s forwards}
+@keyframes nsw{to{width:var(--w)}}
+.ty{align-self:flex-start;display:flex;gap:5px;padding:14px 16px;background:#17130e;border:1px solid #ffffff14;border-radius:16px;border-top-left-radius:4px}
+.ty i{width:6px;height:6px;border-radius:50%;background:var(--brass);animation:nsd 1s infinite}.ty i:nth-child(2){animation-delay:.15s}.ty i:nth-child(3){animation-delay:.3s}
+@keyframes nsd{50%{transform:translateY(-4px);opacity:.4}}
+.nsc{display:flex;gap:8px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none}
+.nsc::-webkit-scrollbar{display:none}
+.nsc button{flex:none;font:inherit;font-size:12px;color:var(--bright);background:none;border:1px solid #b08d5788;border-radius:99px;padding:7px 13px;cursor:pointer;white-space:nowrap;transition:background .2s}
+.nsc button:hover{background:#b08d5733}
+.nsc button.hot{background:var(--brass);color:#070707;border-color:var(--brass)}
+.nsform{display:flex;gap:8px;padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid #ffffff14}
+.nsform input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--bright);background:#17130e;border:1px solid #ffffff1f;border-radius:99px;padding:9px 16px}
+.nsform input:focus{outline:none;border-color:var(--brass)}
+.nsform .send{font:inherit;font-size:13px;background:var(--bone);color:#1b1a17;border:0;border-radius:99px;padding:0 18px;cursor:pointer}
+@media(max-width:520px){.nsp{right:12px;left:12px;width:auto}.nsf{right:14px}}
 </style>
 </head>
 <body>
@@ -331,6 +371,7 @@ python -m src.compare_models</pre>
     var topPct=(top[2]*100).toFixed(1);
     var latency=res.latency_ms?res.latency_ms+' ms':'—';
     camUrl=res.gradcam_base64||null;
+    window.NS_LAST={label:top[0],key:top[1],pct:topPct,all:r};document.dispatchEvent(new Event('ns-result'));
     
     var html='<div class="top" style="margin-bottom:6px">'+top[0]+'</div>'+
       '<div style="display:flex;gap:10px;align-items:center;margin-bottom:18px">'+
@@ -413,5 +454,166 @@ python -m src.compare_models</pre>
   });
 })();
 </script>
+<button id="nsf" class="nsf" type="button" aria-label="Open NeuroScan assistant" aria-expanded="false"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 5h20a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H15l-6 5v-5H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M9 13.5h3l1.5-4 3 8 1.5-4H23"/></svg><i class="dot"></i></button>
+<section id="nsp" class="nsp" role="dialog" aria-label="NeuroScan Guide" hidden>
+  <header>
+    <div><b>NeuroScan Guide</b><small>Ask about the model, the data or your scan</small></div>
+    <div class="ctl"><button id="nsmode" type="button" title="Switch explanation depth">Simple</button><button id="nsvoice" type="button" aria-pressed="false" title="Read answers aloud">Voice</button><button id="nsx" type="button" aria-label="Close">×</button></div>
+  </header>
+  <div id="nsl" class="nsl" aria-live="polite"></div>
+  <div id="nsc" class="nsc"></div>
+  <form id="nsform" class="nsform" autocomplete="off"><input id="nsi" type="text" placeholder="Ask anything… Hinglish bhi chalega" aria-label="Your question"><button id="nsmic" class="nsmic" type="button" hidden>Mic</button><button class="send" type="submit">Send</button></form>
+</section>
+<script>
+(function(){
+  var Q=function(s){return document.querySelector(s)};
+  var fab=Q('#nsf'),pan=Q('#nsp'),log=Q('#nsl'),chips=Q('#nsc'),inp=Q('#nsi'),mic=Q('#nsmic'),modeB=Q('#nsmode'),voiceB=Q('#nsvoice');
+  var tech=false,say=false,quiz=null,greeted=false,pending=false;
+  var F1=[['Glioma',94.2],['Pituitary',91.9],['No tumor',91.8],['Meningioma',79.8]];
+  var ALIKE={glioma:'meningioma',meningioma:'glioma or pituitary',pituitary:'meningioma',no_tumor:''};
+  var DEF=['Explain my scan','Is it trustworthy?','Hardest class?','Quiz me','Show accuracy'];
+
+  function bars(rows){return '<div class="mb">'+rows.map(function(r){return '<span>'+r[0]+'</span><u><i style="--w:'+r[1]+'%"></i></u><b>'+r[2]+'</b>'}).join('')+'</div>'}
+  var F1BARS=bars(F1.map(function(r){return[r[0],r[1],(r[1]/100).toFixed(3)]}));
+
+  var KB=[
+   {k:'leak|duplicate|near.?dup|split|hash|honest|trust|bharosa|sahi hai',go:'why',n:['How is it split?','Show accuracy','Quiz me'],
+    s:'Imagine a student who saw the exam questions while studying: a high score then proves nothing. This MRI dataset hides 704 near-duplicate pairs, so NeuroScan AI finds them and splits by <b>group</b>. No scan crosses from training into the test set, which is why the score is honest.',
+    t:'File hashes plus perceptual hashes find near-duplicates; matches are clustered and a 70/15/15 group split keeps each cluster in one place. The raw dataset leaks 272 groups across its original train/val/test split. The test set is evaluated exactly once.'},
+   {k:'model|efficientnet|cnn|architecture|transfer|backbone|kaunsa',go:'pipeline',n:['How fast is it?','Show pipeline','Run it myself'],
+    s:'It uses <b>EfficientNetB0</b>, a network already trained to see edges and textures, with a fresh four-way classifier on top. It beat a custom CNN on validation, so it was picked.',
+    t:'EfficientNetB0 with the backbone frozen while the classifier head trains, chosen against a custom four-block CNN on validation macro F1. 4.05 M parameters, 16.3 MB.'},
+   {k:'accura|result|score|f1|precision|recall|performance|kitna|kaisa',go:'results',n:['Hardest class?','Is it trustworthy?','Quiz me'],v:F1BARS,
+    s:'About <b>9 out of 10</b> unseen scans are classified correctly: 89.84% on 384 test scans. Per-class F1 is below.',
+    t:'Accuracy 89.84%, macro F1 0.894, weighted F1 0.899, macro precision/recall 0.892/0.898 on 384 held-out scans. Per-class F1:'},
+   {k:'mening|hardest|weak|mistake|confus|galat|error',go:'results',n:['Explain my scan','What is Grad-CAM?'],
+    s:'<b>Meningioma</b> is the hardest (F1 0.798). On MRI it looks a lot like glioma and pituitary tumors, and it has the fewest example scans.',
+    t:'Meningioma F1 0.798, lowest of the four. Errors are mostly glioma↔meningioma and meningioma→pituitary: overlapping appearance, smallest class support among tumor types.'},
+   {k:'grad.?cam|heatmap|heat map|attention|where.*look|explain(ab)?ility',go:'try',n:['Explain my scan','How do I upload?'],
+    s:'Grad-CAM paints a <b>heatmap</b> on the scan showing which regions pushed the model toward its answer. Warm colours mean more influence. Try it in the upload box and use the overlay toggle.',
+    t:'Gradient-weighted class activation mapping on the final conv features: a coarse attribution map for the predicted class, not a tumor segmentation.'},
+   {k:'diagnos|doctor|medical|clinic|real patient|safe|disclaimer|radiolog',go:'classes',n:['Hardest class?','Show accuracy'],
+    s:'<b>No.</b> NeuroScan AI is an educational research project, not a medical device. Anything about a real scan belongs with a radiologist or doctor.',
+    t:'Not validated for clinical use: no prospective study, no calibration audit, single public dataset. Educational use only.'},
+   {k:'glioma|pituitary|no.?tumou?r|class|types?|four|kinds',go:'classes',n:['Hardest class?','Explain my scan'],
+    s:'It sorts a scan into four groups: <b>glioma</b>, <b>meningioma</b>, <b>pituitary</b> tumor, or <b>no tumor</b>. Glioma is easiest for it (F1 0.942).',
+    t:'Four classes: glioma (F1 0.942), pituitary (0.919), no tumor (0.918), meningioma (0.798).'},
+   {k:'fast|speed|slow|size|param|latency|ms|cpu|train time|kitni der',go:'results',n:['Which model?','Run it myself'],
+    s:'Very light: about <b>31 ms</b> per image on a normal CPU, 16.3 MB model, and it trained in roughly 95 seconds.',
+    t:'4.05 M parameters, 16.3 MB, ~31 ms per image on CPU, ~95 s training time.'},
+   {k:'pipeline|step|workflow|process|kaise bana',go:'pipeline',n:['How is it split?','Which model?'],
+    s:'Six steps: <b>discover</b> images, <b>find duplicates</b>, <b>split by group</b>, <b>train</b>, <b>evaluate once</b>, then <b>explain</b> with Grad-CAM.',
+    t:'Discover → hash and cluster duplicates → 70/15/15 group split → train custom CNN vs EfficientNetB0 (select on val macro F1) → single test evaluation → Grad-CAM overlays.'},
+   {k:'upload|try|analy[sz]e|drop|jpg|png|slice|kaise use',go:'try',n:['Explain my scan','What is Grad-CAM?'],
+    s:'Scroll to <b>Try it</b>, drop a brain MRI slice (JPG or PNG), then press <b>Analyse scan</b>. Photos that are not MRIs are rejected by a quality check.',
+    t:'POST to /api/predict with the image as multipart form data. The backend validates it is a brain MRI, runs inference and returns class probabilities, latency and a Grad-CAM image.'},
+   {k:'run|clone|github|code|repo|install|dataset|reproduce|source',go:'run',n:['How is it split?','Show pipeline'],
+    s:'Clone the GitHub repo, install the requirements, add your own copy of the dataset, and run <b>python -m src.compare_models</b> to reproduce every number.',
+    t:'git clone → pip install -r requirements.txt → place the dataset in the “DATASET FOR NEROSCAN AI” folder at the project root → python -m src.compare_models.'},
+   {k:'who|author|made|built|creator|adarsh|kisne',go:'run',n:['Which model?','Show accuracy'],
+    s:'NeuroScan AI is a 2026 research project by <b>Adarsh Dwivedi</b>. The code is on GitHub.',
+    t:'Author: Adarsh Dwivedi, 2026. Repository: Adarsh-Intelligence/NeuroScan-AI.'}
+  ];
+  var QZ=[
+   {q:'Why does NeuroScan AI split data by duplicate group?',o:['It trains faster','So no test scan was seen in training','To get more images'],a:1,e:'Near-duplicates across train and test inflate the score. Group splitting prevents that.'},
+   {q:'Which class is the hardest for the model?',o:['Glioma','No tumor','Meningioma'],a:2,e:'Meningioma has F1 0.798 and is often mixed up with glioma and pituitary.'},
+   {q:'What does a Grad-CAM heatmap show?',o:['Tumor size in mm','Where the model looked','The patient’s age'],a:1,e:'It highlights the regions that influenced the predicted class most.'}
+  ];
+
+  function plain(h){var d=document.createElement('div');d.innerHTML=h;return d.textContent}
+  function scroll(){log.scrollTop=log.scrollHeight}
+  function add(cls,html,asText){var m=document.createElement('div');m.className='m '+cls;if(asText)m.textContent=html;else m.innerHTML=html;log.appendChild(m);scroll();return m}
+  function setChips(list,fn){chips.innerHTML='';list.forEach(function(t,i){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(){fn(t,i)};chips.appendChild(b)});return chips}
+  function defChips(extra){var l=(extra||[]).concat(DEF).filter(function(x,i,a){return a.indexOf(x)===i}).slice(0,6);setChips(l,function(t){send(t)})}
+  function jump(id){var el=document.getElementById(id);if(!el)return;el.scrollIntoView({behavior:'smooth',block:'start'});if(el.animate)el.animate([{background:'#b08d5730'},{background:'transparent'}],{duration:1800})}
+
+  function reply(o){
+    var ty=document.createElement('div');ty.className='ty';ty.innerHTML='<i></i><i></i><i></i>';log.appendChild(ty);scroll();
+    setTimeout(function(){
+      ty.remove();
+      var h=o.h+(o.v||'');
+      var m=add('b',h);
+      if(o.go){var g=document.createElement('button');g.type='button';g.className='g';g.textContent='Show me on the page ↗';g.onclick=function(){jump(o.go);if(innerWidth<700)toggle(false)};m.appendChild(g)}
+      if(say&&window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(plain(o.h)))}
+      if(o.keep)return;
+      defChips(o.n);
+    },420+Math.min(o.h.length*3,700));
+  }
+
+  function explainScan(){
+    var d=window.NS_LAST;
+    if(!d)return{h:'I haven’t seen a scan yet. Upload an MRI slice in <b>Try it</b>, press <b>Analyse scan</b>, and I’ll walk you through the result.',go:'try',n:['How do I upload?']};
+    var c=parseFloat(d.pct),band=c>=90?'high':c>=70?'moderate':'low';
+    var read=band==='high'?'The model is fairly sure.':band==='moderate'?'It leans this way, but the other classes are not ruled out.':'It is torn between classes, so treat this as uncertain.';
+    var h='Your scan came out as <b>'+d.label+'</b> at <b>'+d.pct+'%</b> confidence ('+band+'). '+read;
+    var s=d.all[1];
+    if(s)h+=' Runner-up: <b>'+s[0]+'</b> at '+(s[2]*100).toFixed(1)+'%.';
+    if(ALIKE[d.key])h+=' On MRI, '+d.label.toLowerCase()+' is often confused with '+ALIKE[d.key]+', so that runner-up is worth a look.';
+    for(var i=0;i<F1.length;i++)if(F1[i][0]===d.label)h+=' On held-out scans this class has F1 '+(F1[i][1]/100).toFixed(3)+'.';
+    if(tech&&s)h+=' Gap to runner-up: '+(c-s[2]*100).toFixed(1)+' points. Softmax scores are not calibrated certainty.';
+    h+=' This is a learning demo, not a diagnosis.';
+    return{h:h,v:bars(d.all.map(function(r){return[r[0],(r[2]*100).toFixed(1),(r[2]*100).toFixed(0)+'%']})),go:'try',n:['What is Grad-CAM?','Hardest class?']};
+  }
+
+  function startQuiz(){quiz={i:0,s:0};ask()}
+  function ask(){
+    var q=QZ[quiz.i];
+    add('b','<b>Question '+(quiz.i+1)+' of '+QZ.length+'</b><br>'+q.q);
+    setChips(q.o,function(t,i){
+      add('u',t,true);
+      var ok=i===q.a;if(ok)quiz.s++;
+      var last=quiz.i===QZ.length-1;
+      add('b',(ok?'<b>Correct.</b> ':'<b>Not quite.</b> ')+q.e);
+      if(last){var s=quiz.s;quiz=null;add('b','You scored <b>'+s+' / '+QZ.length+'</b>. '+(s===QZ.length?'You could explain this project yourself.':'Ask me about the parts you missed.'));defChips()}
+      else{quiz.i++;setTimeout(ask,700)}
+    });
+  }
+
+  function respond(text){
+    var t=text.toLowerCase();
+    if(/quiz|test me|sawal puch/.test(t))return startQuiz();
+    if(/(my|this|uploaded|mera|meri) ?(scan|result|prediction|report|image)|explain my|kya aaya|mere scan/.test(t))return reply(explainScan());
+    if(/^(hi|hello|hey|hii|namaste|yo)\b/.test(t))return reply({h:'Hi! I’m the NeuroScan guide. Ask me about the model, the dataset leak fix, the results, or upload a scan and I’ll explain what it means.',n:['Explain my scan']});
+    if(/thank|shukriya|dhanyavad|thanks/.test(t))return reply({h:'Anytime. Want a quick quiz to test what you picked up?',n:['Quiz me']});
+    var best=null,bs=0;
+    KB.forEach(function(e){var m=t.match(new RegExp(e.k,'g'));var s=m?m.length:0;if(s>bs){bs=s;best=e}});
+    if(best)return reply({h:tech?best.t:best.s,v:best.v,go:best.go,n:best.n});
+    reply({h:'I’m not sure about that one. I know this project’s model, data split, results, Grad-CAM and your uploaded scan. Try one of these:',n:['Which model?','How is it split?']});
+  }
+
+  function send(text){text=(text||'').trim();if(!text)return;if(quiz)quiz=null;add('u',text,true);inp.value='';respond(text)}
+
+  function toggle(open){
+    var o=open===undefined?pan.hidden:open;
+    pan.hidden=!o;fab.setAttribute('aria-expanded',o);fab.classList.remove('ping');
+    if(o){
+      if(!greeted){greeted=true;add('b','Hi, I’m your <b>NeuroScan guide</b>. I can explain how the model works, why the score is honest, and, once you analyse a scan, what <i>your</i> result means.');defChips(window.NS_LAST?['Explain my scan']:[])}
+      if(pending){pending=false;add('b','Your scan result is in. Want me to explain it?');setChips(['Explain my scan'],function(t){send(t)}).firstChild.className='hot'}
+      setTimeout(function(){inp.focus()},50);
+    }else if(window.speechSynthesis)speechSynthesis.cancel();
+  }
+  fab.onclick=function(){toggle()};
+  Q('#nsx').onclick=function(){toggle(false)};
+  addEventListener('keydown',function(e){if(e.key==='Escape'&&!pan.hidden)toggle(false)});
+  Q('#nsform').addEventListener('submit',function(e){e.preventDefault();send(inp.value)});
+  modeB.onclick=function(){tech=!tech;modeB.textContent=tech?'Technical':'Simple';add('b','Switched to <b>'+(tech?'technical':'simple')+'</b> explanations.')};
+  voiceB.onclick=function(){say=!say;voiceB.setAttribute('aria-pressed',say);if(!say&&window.speechSynthesis)speechSynthesis.cancel()};
+
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){
+    mic.hidden=false;var rec=new SR();rec.lang='en-IN';rec.interimResults=false;
+    rec.onresult=function(e){send(e.results[0][0].transcript)};
+    rec.onend=function(){mic.classList.remove('on')};
+    mic.onclick=function(){try{mic.classList.add('on');rec.start()}catch(x){mic.classList.remove('on')}};
+  }
+
+  document.addEventListener('ns-result',function(){
+    fab.classList.add('ping');
+    if(!pan.hidden){add('b','Your scan result is in. Want me to explain it?');setChips(['Explain my scan'],function(t){send(t)}).firstChild.className='hot'}
+    else pending=true;
+  });
+})();
+</script>
+
 </body>
 </html>

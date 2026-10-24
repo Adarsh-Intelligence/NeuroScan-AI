@@ -15,9 +15,14 @@ from fastapi import FastAPI, File, HTTPException, Query, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 
+from dotenv import load_dotenv
+
 from src import config as C
+from src.chatbot import chat_router
 from src.inference import NeuroScanEngine
 from src.utils import get_logger, load_json
+
+load_dotenv()
 
 log = get_logger("app")
 
@@ -55,6 +60,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount NeuroBot AI Chatbot Router (/api/chat, /api/chat/status)
+app.include_router(chat_router)
 
 def _get_frontend_path() -> Path:
     for candidate in ("index.html", "frontend.html"):
